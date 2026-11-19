@@ -2,24 +2,58 @@ import UIKit
 
 final class TabBarController: UITabBarController {
 
-    var servicesAssembly: ServicesAssembly!
+    private let servicesAssembly: ServicesAssembly
 
-    private let catalogTabBarItem = UITabBarItem(
-        title: NSLocalizedString("Tab.catalog", comment: ""),
-        image: UIImage(systemName: "square.stack.3d.up.fill"),
-        tag: 0
-    )
+    init(servicesAssembly: ServicesAssembly) {
+        self.servicesAssembly = servicesAssembly
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let catalogController = TestCatalogViewController(
-            servicesAssembly: servicesAssembly
+        let sortStorage = SortStorageImpl()
+        let profile = ProfileViewController(
+            viewModel: ProfileViewModel(service: servicesAssembly.profileService)
         )
-        catalogController.tabBarItem = catalogTabBarItem
+        let catalog = CatalogViewController(
+            viewModel: CatalogViewModel(service: servicesAssembly.collectionsService, sortStorage: sortStorage)
+        )
+        let cart = CartViewController(
+            viewModel: CartViewModel(
+                orderService: servicesAssembly.orderService,
+                nftService: servicesAssembly.nftService
+            )
+        )
+        let statistics = StatisticsViewController(
+            viewModel: StatisticsViewModel(service: servicesAssembly.usersService, sortStorage: sortStorage)
+        )
 
-        viewControllers = [catalogController]
+        viewControllers = [
+            makeTab(profile, title: "Tab.profile", image: "person.crop.circle.fill"),
+            makeTab(catalog, title: "Tab.catalog", image: "square.stack.3d.up.fill"),
+            makeTab(cart, title: "Tab.cart", image: "cart.fill"),
+            makeTab(statistics, title: "Tab.statistics", image: "flag.2.crossed.fill")
+        ]
+        selectedIndex = 1
 
-        view.backgroundColor = .systemBackground
+        tabBar.tintColor = .ypBlue
+        tabBar.unselectedItemTintColor = .ypBlack
+        tabBar.backgroundColor = .ypWhite
+        view.backgroundColor = .ypWhite
+    }
+
+    private func makeTab(_ controller: UIViewController, title: String, image: String) -> UIViewController {
+        let navigation = UINavigationController(rootViewController: controller)
+        navigation.tabBarItem = UITabBarItem(
+            title: NSLocalizedString(title, comment: ""),
+            image: UIImage(systemName: image),
+            selectedImage: nil
+        )
+        return navigation
     }
 }
