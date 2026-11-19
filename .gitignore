@@ -92,3 +92,6 @@ iOSInjectionProject/
 .DS_Store
 
 Secrets.xcconfig
+project.yml
+.build/
+.build-udid
