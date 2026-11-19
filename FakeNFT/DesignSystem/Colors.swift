@@ -25,43 +25,24 @@ extension UIColor {
         )
     }
 
-    // Ниже приведены примеры цветов, настоящие цвета надо взять из фигмы
-
-    // Primary Colors
-    static let primary = UIColor(red: 0 / 255, green: 122 / 255, blue: 255 / 255, alpha: 1.0)
-
-    // Secondary Colors
-    static let secondary = UIColor(red: 255 / 255, green: 193 / 255, blue: 7 / 255, alpha: 1.0)
-
-    // Background Colors
-    static let background = UIColor.white
-
-    // Text Colors
-    static let textPrimary = UIColor.black
-    static let textSecondary = UIColor.gray
-    static let textOnPrimary = UIColor.white
-    static let textOnSecondary = UIColor.black
-
-    private static let yaBlackLight = UIColor(hexString: "1A1B22")
-    private static let yaBlackDark = UIColor.white
-    private static let yaLightGrayLight = UIColor(hexString: "#F7F7F8")
-    private static let yaLightGrayDark = UIColor(hexString: "#2C2C2E")
-
-    static let segmentActive = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
-        ? .yaBlackDark
-        : .yaBlackLight
+    private static func dynamic(light: UIColor, dark: UIColor) -> UIColor {
+        UIColor { traits in
+            traits.userInterfaceStyle == .dark ? dark : light
+        }
     }
 
-    static let segmentInactive = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
-        ? .yaLightGrayDark
-        : .yaLightGrayLight
-    }
+    // MARK: - Палитра из макета
 
-    static let closeButton = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
-        ? .yaBlackDark
-        : .yaBlackLight
-    }
+    static let ypBlack = dynamic(light: UIColor(hexString: "1A1B22"), dark: .white)
+    static let ypWhite = dynamic(light: .white, dark: UIColor(hexString: "1A1B22"))
+    static let ypLightGrey = dynamic(light: UIColor(hexString: "F7F7F8"), dark: UIColor(hexString: "2C2C2E"))
+    static let ypGrey = UIColor(hexString: "625C5C")
+    static let ypRed = UIColor(hexString: "F56B6C")
+    static let ypGreen = UIColor(hexString: "1C9F00")
+    static let ypBlue = UIColor(hexString: "0A84FF")
+    static let ypYellow = UIColor(hexString: "FEEF0D")
+
+    static let segmentActive = ypBlack
+    static let segmentInactive = ypLightGrey
+    static let closeButton = ypBlack
 }
