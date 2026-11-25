@@ -16,6 +16,7 @@ final class CatalogViewModel {
     var onError: (() -> Void)?
 
     private(set) var collections: [NftCollection] = []
+    private(set) var hasPendingError = false
 
     private let service: CollectionsService
     private let sortStorage: SortStorage
@@ -29,6 +30,7 @@ final class CatalogViewModel {
     }
 
     func loadCollections() {
+        hasPendingError = false
         onLoadingChange?(true)
         let sort = sort
         service.loadCollections { [weak self] result in
@@ -38,13 +40,19 @@ final class CatalogViewModel {
             DispatchQueue.main.async {
                 self.onLoadingChange?(false)
                 guard let sorted else {
+                    self.hasPendingError = true
                     self.onError?()
                     return
                 }
-                self.collections = sorted
+                // пока шла загрузка, сортировку могли поменять
+                self.collections = sort == self.sort ? sorted : self.sorted(sorted, by: self.sort)
                 self.onCollectionsChange?()
             }
         }
+    }
+
+    func errorDidShow() {
+        hasPendingError = false
     }
 
     func applySort(_ sort: CatalogSort) {

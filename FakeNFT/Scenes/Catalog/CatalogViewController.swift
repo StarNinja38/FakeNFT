@@ -33,6 +33,11 @@ final class CatalogViewController: UIViewController, LoadingView, ErrorView {
         viewModel.loadCollections()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        showErrorIfPossible()
+    }
+
     private func setupView() {
         view.backgroundColor = .ypWhite
         navigationItem.rightBarButtonItem = makeSortButton(action: #selector(sortTapped))
@@ -59,7 +64,16 @@ final class CatalogViewController: UIViewController, LoadingView, ErrorView {
             isLoading ? self?.showLoading() : self?.hideLoading()
         }
         viewModel.onError = { [weak self] in
-            self?.showNetworkError { self?.viewModel.loadCollections() }
+            self?.showErrorIfPossible()
+        }
+    }
+
+    // алерт показываю только когда каталог на экране и меню сортировки закрыто
+    private func showErrorIfPossible() {
+        guard viewModel.hasPendingError, view.window != nil, presentedViewController == nil else { return }
+        viewModel.errorDidShow()
+        showNetworkError { [weak self] in
+            self?.viewModel.loadCollections()
         }
     }
 
@@ -71,7 +85,9 @@ final class CatalogViewController: UIViewController, LoadingView, ErrorView {
             SortOption(title: NSLocalizedString("Sort.byNftCount", comment: "")) { [weak self] in
                 self?.viewModel.applySort(.nftCount)
             }
-        ])
+        ], onClose: { [weak self] in
+            self?.showErrorIfPossible()
+        })
     }
 }
 

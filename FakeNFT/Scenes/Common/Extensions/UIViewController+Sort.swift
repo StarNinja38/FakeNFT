@@ -6,7 +6,7 @@ struct SortOption {
 }
 
 extension UIViewController {
-    func showSortSheet(options: [SortOption]) {
+    func showSortSheet(options: [SortOption], onClose: (() -> Void)? = nil) {
         let alert = UIAlertController(
             title: NSLocalizedString("Sort.title", comment: ""),
             message: nil,
@@ -15,9 +15,12 @@ extension UIViewController {
         options.forEach { option in
             alert.addAction(UIAlertAction(title: option.title, style: .default) { _ in
                 option.action()
+                onClose?()
             })
         }
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Sort.close", comment: ""), style: .cancel))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Sort.close", comment: ""), style: .cancel) { _ in
+            onClose?()
+        })
         present(alert, animated: true)
     }
 
