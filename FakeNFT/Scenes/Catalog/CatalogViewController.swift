@@ -5,11 +5,14 @@ final class CatalogViewController: UIViewController, LoadingView, ErrorView {
     let activityIndicator = UIActivityIndicatorView(style: .large)
 
     private let viewModel: CatalogViewModel
+    // экран коллекции собирается снаружи, чтобы каталог не знал про сервисы
+    private let makeCollectionScreen: (String) -> UIViewController
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(CatalogCell.self)
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.backgroundColor = .ypWhite
         tableView.rowHeight = 187
@@ -17,8 +20,9 @@ final class CatalogViewController: UIViewController, LoadingView, ErrorView {
         return tableView
     }()
 
-    init(viewModel: CatalogViewModel) {
+    init(viewModel: CatalogViewModel, makeCollectionScreen: @escaping (String) -> UIViewController) {
         self.viewModel = viewModel
+        self.makeCollectionScreen = makeCollectionScreen
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -41,6 +45,7 @@ final class CatalogViewController: UIViewController, LoadingView, ErrorView {
     private func setupView() {
         view.backgroundColor = .ypWhite
         navigationItem.rightBarButtonItem = makeSortButton(action: #selector(sortTapped))
+        navigationItem.backButtonDisplayMode = .minimal
 
         view.addSubview(tableView)
         view.addSubview(activityIndicator)
@@ -102,5 +107,14 @@ extension CatalogViewController: UITableViewDataSource {
         let cell: CatalogCell = tableView.dequeueReusableCell()
         cell.configure(with: viewModel.cellModel(at: indexPath.row))
         return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+
+extension CatalogViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let screen = makeCollectionScreen(viewModel.collectionId(at: indexPath.row))
+        navigationController?.pushViewController(screen, animated: true)
     }
 }

@@ -9,6 +9,8 @@
 "Sort.byNftCount" = "По количеству NFT";
 "Sort.byRating" = "По рейтингу";
 
+"Collection.author" = "Автор коллекции:";
+
 "Cart.price" = "Цена";
 "Cart.pay" = "К оплате";
 "Cart.empty" = "Корзина пуста";
