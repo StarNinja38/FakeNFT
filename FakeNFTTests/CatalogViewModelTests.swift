@@ -95,6 +95,8 @@ private final class CollectionsServiceStub: CollectionsService {
         self.completion = completion
     }
 
+    func loadCollection(id: String, completion: @escaping (Result<NftCollection, Error>) -> Void) {}
+
     func complete(with result: Result<[NftCollection], Error>) {
         completion?(result)
     }
