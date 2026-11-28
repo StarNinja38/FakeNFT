@@ -19,10 +19,20 @@ extension ErrorView where Self: UIViewController {
             message: model.message,
             preferredStyle: .alert
         )
-        let action = UIAlertAction(title: model.actionText, style: UIAlertAction.Style.default) {_ in
+        let cancel = UIAlertAction(title: NSLocalizedString("Error.cancel", comment: ""), style: .cancel)
+        let action = UIAlertAction(title: model.actionText, style: .default) { _ in
             model.action()
         }
+        alert.addAction(cancel)
         alert.addAction(action)
         present(alert, animated: true)
+    }
+
+    func showNetworkError(retry: @escaping () -> Void) {
+        showError(ErrorModel(
+            message: NSLocalizedString("Error.network", comment: ""),
+            actionText: NSLocalizedString("Error.repeat", comment: ""),
+            action: retry
+        ))
     }
 }
