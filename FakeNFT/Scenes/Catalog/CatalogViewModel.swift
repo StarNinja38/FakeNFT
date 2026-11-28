@@ -70,6 +70,10 @@ final class CatalogViewModel {
         )
     }
 
+    func collectionId(at index: Int) -> String {
+        collections[index].id
+    }
+
     private func sorted(_ collections: [NftCollection], by sort: CatalogSort) -> [NftCollection] {
         switch sort {
         case .name:

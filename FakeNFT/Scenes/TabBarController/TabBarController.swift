@@ -20,8 +20,20 @@ final class TabBarController: UITabBarController {
         let profile = ProfileViewController(
             viewModel: ProfileViewModel(service: servicesAssembly.profileService)
         )
+        let services = servicesAssembly
         let catalog = CatalogViewController(
-            viewModel: CatalogViewModel(service: servicesAssembly.collectionsService, sortStorage: sortStorage)
+            viewModel: CatalogViewModel(service: services.collectionsService, sortStorage: sortStorage),
+            makeCollectionScreen: { collectionId in
+                CollectionViewController(
+                    viewModel: CollectionViewModel(
+                        collectionId: collectionId,
+                        collectionsService: services.collectionsService,
+                        nftService: services.nftService,
+                        profileService: services.profileService,
+                        orderService: services.orderService
+                    )
+                )
+            }
         )
         let cart = CartViewController(
             viewModel: CartViewModel(
@@ -49,6 +61,7 @@ final class TabBarController: UITabBarController {
 
     private func makeTab(_ controller: UIViewController, title: String, image: String) -> UIViewController {
         let navigation = UINavigationController(rootViewController: controller)
+        navigation.navigationBar.tintColor = .ypBlack
         navigation.tabBarItem = UITabBarItem(
             title: NSLocalizedString(title, comment: ""),
             image: UIImage(systemName: image),
